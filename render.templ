@@ -1,5 +1,5 @@
-package component
+package turnstile
 
-templ Turnstile(turnstileSiteKey string) {
+templ Render(turnstileSiteKey string) {
 	<div class="cf-turnstile" data-sitekey={ turnstileSiteKey } data-callback="javascriptCallback"></div>
 }
