@@ -1,4 +1,4 @@
-module github.com/justynhunter/turnstile-go
+module github.com/justynhunter/go-turnstile
 
 go 1.23.1
 
