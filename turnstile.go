@@ -26,7 +26,7 @@ type turnstileVerifyResponseBody struct {
 
 func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string) (bool, error) {
 	if err := req.ParseForm(); err != nil {
-		log.Printf("error parsing form body: %v", err)
+		log.Printf("error parsing turnstile form body: %v", err)
 		return false, err
 	}
 
