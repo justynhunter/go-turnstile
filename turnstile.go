@@ -28,6 +28,7 @@ func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string
 	// get turnstile key from form body
 	formBody := formSubmission{}
 	if err := json.NewDecoder(req.Body).Decode(&formBody); err != nil {
+		log.Printf("error parsing form body: %v", err)
 		return false, err
 	}
 
@@ -42,14 +43,14 @@ func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string
 	}
 	postBytes, err := json.Marshal(postBody)
 	if err != nil {
-		log.Printf("error: %v", err.Error())
+		log.Printf("error marshaling json: %s", err.Error())
 		return false, err
 	}
 
 	// build request
 	turnstileRequest, err := http.NewRequest("POST", turnstileUrl, bytes.NewReader(postBytes))
 	if err != nil {
-		log.Printf("error: %v", err.Error())
+		log.Printf("error building turnstile  request: %v", err.Error())
 		return false, err
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -58,7 +59,7 @@ func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string
 	client := &http.Client{}
 	resp, err := client.Do(turnstileRequest)
 	if err != nil {
-		log.Printf("error: %v", err.Error())
+		log.Printf("error contacting turnstile: %v", err.Error())
 		return false, err
 	}
 	defer resp.Body.Close()
@@ -67,7 +68,7 @@ func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string
 	var response turnstileVerifyResponseBody
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil || !response.Success {
-		log.Printf("error: %v", err.Error())
+		log.Printf("error decoding turnstile response: %v", err.Error())
 		return false, err
 	}
 
