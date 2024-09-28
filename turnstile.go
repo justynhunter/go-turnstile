@@ -25,11 +25,13 @@ type turnstileVerifyResponseBody struct {
 }
 
 func IsSubmitterHuman(req *http.Request, turnstileUrl, turnstileSecretKey string) (bool, error) {
-	// get turnstile key from form body
-	formBody := formSubmission{}
-	if err := json.NewDecoder(req.Body).Decode(&formBody); err != nil {
+	if err := req.ParseForm(); err != nil {
 		log.Printf("error parsing form body: %v", err)
 		return false, err
+	}
+
+	formBody := formSubmission{
+		TurnstileResponse: req.PostForm.Get("cf-turnstile-response"),
 	}
 
 	// get ip from headers
